@@ -1,0 +1,30 @@
+{
+  "name": "graphqlStudy",
+  "version": "1.0.1",
+  "description": "\"\"\u001b[DGraphQL implementation for study purpose\"",
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-graphql": "^0.12.0",
+    "express-session": "^1.17.2",
+    "graphql": "^15.5.0",
+    "http": "^0.0.1-security",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.6.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pramod784/graphqlcurd.git"
+  },
+  "author": "Pramod Yewale",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pramod784/graphqlcurd/issues"
+  },
+  "homepage": "https://github.com/pramod784/graphqlcurd#readme"
+}
