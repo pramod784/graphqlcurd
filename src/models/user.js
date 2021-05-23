@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.hasMany(models.employees, {
-        foreignKey: "id",
-        targetKey: "user_id",
+        foreignKey: "user_id",
+        targetKey: "id",
       });
     }
   }
