@@ -10,6 +10,7 @@
     "express-session": "^1.17.2",
     "graphql": "^15.5.0",
     "http": "^0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
     "md5": "^2.3.0",
     "mysql2": "^2.2.5",
     "path": "^0.12.7",

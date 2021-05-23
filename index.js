@@ -6,12 +6,20 @@ const Models = require("./src/models");
 const sequelize = require("sequelize");
 const Op = require("sequelize").Op;
 var md5 = require("md5");
-
+var { sign } = require("jsonwebtoken");
+var bodyParser = require("body-parser");
+var {
+  sort_order_const,
+  SortObj,
+  UsersList,
+  UsersListWithPagination,
+  search_key_const,
+  sort_column_const,
+  loginResponse,
+} = require("./src/helpers/graphqlHelper");
 const {
-  buildSchema,
   GraphQLSchema,
   GraphQLObjectType,
-  GraphQLInputObjectType,
   GraphQLString,
   GraphQLList,
   GraphQLInt,
@@ -19,52 +27,7 @@ const {
 } = require("graphql");
 
 require("dotenv").config();
-const search_key_const = ["first_name", "last_name", "employee_id"];
-const sort_column_const = [
-  "first_name",
-  "last_name",
-  "email",
-  "employee_id",
-  "organization_name",
-];
-const sort_order_const = ["ASC", "DESC"];
 
-const SortObj = new GraphQLInputObjectType({
-  name: "SortData",
-  description: "We need to provide sorting logic here",
-  fields: () => ({
-    column: { type: GraphQLNonNull(GraphQLString) },
-    order: {
-      type: GraphQLNonNull(GraphQLString),
-      description: "Only value ASC Or DESE allowed else ignored",
-    },
-    /* order: { type: GraphQLNonNull(GraphQLString) }, */
-  }),
-});
-
-const UsersList = new GraphQLObjectType({
-  name: "GetUsers",
-  description: "",
-  fields: () => ({
-    id: { type: GraphQLNonNull(GraphQLInt) },
-    employee_id: { type: GraphQLNonNull(GraphQLString) },
-    first_name: { type: GraphQLNonNull(GraphQLString) },
-    last_name: { type: GraphQLString },
-    email: { type: GraphQLNonNull(GraphQLString) },
-    status: { type: GraphQLInt },
-    organization_name: { type: GraphQLString },
-  }),
-});
-const UsersListWithPagination = new GraphQLObjectType({
-  name: "GetUsersPagination",
-  description: "List with total count!",
-  fields: () => ({
-    total_rows: { type: GraphQLInt },
-    rows: {
-      type: new GraphQLList(UsersList),
-    },
-  }),
-});
 const RootQueryType = new GraphQLObjectType({
   name: "GetUsersdata",
   description: "Root Query",
@@ -325,6 +288,44 @@ const RootMutationType = new GraphQLObjectType({
         }
       },
     },
+    UsersLogin: {
+      type: loginResponse,
+      description: "This api will validates user using email and password",
+      args: {
+        email: { type: GraphQLNonNull(GraphQLString) },
+        password: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (parent, args) => {
+        let email = args.email;
+        let password = md5(args.password);
+        let usersData = await Models.user
+          .findOne({
+            attributes: ["user.id", "user.employee_id"],
+            where: { email: email, password: password },
+            raw: true,
+          })
+          .then((resd) => {
+            console.log("logged user data =>=>=>=>=>=>=>", resd);
+            return resd;
+          })
+          .catch((e) => {
+            return false;
+          });
+        if (!usersData) {
+          throw new Error("No user found with provided credential ");
+        }
+        let accesstoken = sign(
+          {
+            data: { user_id: usersData.id },
+          },
+          process.env.JWT_TOKEN_SECRET,
+          { expiresIn: 60 * 60 }
+        );
+        //res.cookie("Pramod Testing");
+        console.log("accesstoken", accesstoken);
+        return { accesstoken: accesstoken };
+      },
+    },
   }),
 });
 const app = express();
@@ -334,6 +335,7 @@ const schema = new GraphQLSchema({
   query: RootQueryType,
   mutation: RootMutationType,
 });
+app.get("/", (_req, res) => res.send("Welcome!"));
 
 app.use(
   "/graphql",
@@ -342,15 +344,6 @@ app.use(
     graphiql: true,
   })
 );
-
-/* app.use(
-  "/graphql",
-  graphqlHTTP({
-    schema: schema_old,
-    rootValue: root,
-    graphiql: true,
-  })
-); */
 
 const port = parseInt(process.env.APP_PORT, 10) || 8080;
 app.set("port", port);
