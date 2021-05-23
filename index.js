@@ -44,7 +44,7 @@ const SortObj = new GraphQLInputObjectType({
 
 const UsersList = new GraphQLObjectType({
   name: "GetUsers",
-  description: "This represents a book written by an author",
+  description: "",
   fields: () => ({
     id: { type: GraphQLNonNull(GraphQLInt) },
     employee_id: { type: GraphQLNonNull(GraphQLString) },
@@ -53,6 +53,16 @@ const UsersList = new GraphQLObjectType({
     email: { type: GraphQLNonNull(GraphQLString) },
     status: { type: GraphQLInt },
     organization_name: { type: GraphQLString },
+  }),
+});
+const UsersListWithPagination = new GraphQLObjectType({
+  name: "GetUsersPagination",
+  description: "List with total count!",
+  fields: () => ({
+    total_rows: { type: GraphQLInt },
+    rows: {
+      type: new GraphQLList(UsersList),
+    },
   }),
 });
 const RootQueryType = new GraphQLObjectType({
@@ -106,17 +116,26 @@ const RootQueryType = new GraphQLObjectType({
     },
     UsersList: {
       /* type: UsersList, */
-      type: new GraphQLList(UsersList),
+      type: UsersListWithPagination,
+      /* type: new GraphQLList(UsersList), */
       description:
         "This api will search users from system. \n Search Keys will be first_name / last_name / employee_id. \n Where employee_id should be exact match and other fields having wildcard search.",
       args: {
         sort: { type: new GraphQLList(SortObj) },
         searchKey: { type: GraphQLString },
         searchValue: { type: GraphQLString },
+        page_no: {
+          type: GraphQLInt,
+          description: "10 records per page. Default value will be 1",
+        },
       },
       resolve: async (parent, args) => {
         let searchKey = args.searchKey;
         let searchValue = args.searchValue;
+        let page_no =
+          args.page_no == undefined || args.page_no < 1 ? 1 : args.page_no;
+        let limit = 10;
+        let offset = (page_no - 1) * limit;
         if (
           (searchKey == undefined && searchValue != undefined) ||
           (searchKey != undefined && searchValue == undefined)
@@ -179,7 +198,7 @@ const RootQueryType = new GraphQLObjectType({
           };
         }
         let usersData = await Models.user
-          .findAll({
+          .findAndCountAll({
             attributes: [
               "user.id",
               "user.employee_id",
@@ -202,10 +221,14 @@ const RootQueryType = new GraphQLObjectType({
               },
             ],
             order: order_by,
+            limit: limit,
+            offset: offset,
+            subQuery: false,
             raw: true,
           })
           .then((res) => {
             //console.log("res =>=>=>=>=>=>=>", res);
+            res.total_rows = res.count;
             return res;
           })
           .catch((e) => {
