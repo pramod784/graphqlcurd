@@ -7,7 +7,8 @@ const sequelize = require("sequelize");
 const Op = require("sequelize").Op;
 var md5 = require("md5");
 var { sign } = require("jsonwebtoken");
-var bodyParser = require("body-parser");
+var middleware = require("./src/middleware/checkAuth");
+
 var {
   sort_order_const,
   SortObj,
@@ -330,6 +331,8 @@ const RootMutationType = new GraphQLObjectType({
 });
 const app = express();
 app.use(routes);
+
+app.use(middleware);
 
 const schema = new GraphQLSchema({
   query: RootQueryType,
