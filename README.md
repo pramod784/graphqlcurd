@@ -34,8 +34,8 @@ npm install --save-dev nodemon
 ```
 nodemon npm start
 ```
-Access Project using <URL>/graphql
-Queries as follows\
+Access Project using <URL>/graphql\
+Queries as follows
 ### Register User ###
 `
   mutation {
@@ -50,3 +50,40 @@ Queries as follows\
   }
 }
 `
+### Login User ###
+`mutation {
+  usersLogin(data: {email: "ram@gmail0.com", password: "123456"}) {
+    id
+    employee_id
+    accesstoken
+  }
+}`
+
+### Get User Detail ###
+Users List\
+Secured API : Need to pass bearer token in header\
+   `{usersList(searchKey: "first_name", searchValue: "pra",page_no:1,sort:[{column:"first_name",order:"ASC"}]) {
+    rows {
+      id
+      email
+      status
+      first_name
+      last_name
+      employee_id
+      organization_name
+    }
+    total_rows
+}}`
+  
+### Get User Detail ###
+This is open api (without authentication) just for testing\
+   `query{findUser(id:27){
+  id
+  employee_id
+  first_name
+  last_name
+  organization_name
+  status
+}}`
+   
+   
