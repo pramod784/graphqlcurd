@@ -1,4 +1,4 @@
-var http = require("http");
+const http = require("http");
 const express = require("express");
 var { graphqlHTTP } = require("express-graphql");
 const routes = require("./src/routes");

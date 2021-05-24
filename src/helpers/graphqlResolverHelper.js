@@ -1,7 +1,9 @@
 const Models = require("./../models");
 const sequelize = require("sequelize");
 const Op = require("sequelize").Op;
-var md5 = require("md5");
+const md5 = require("md5");
+const {sign} = require("jsonwebtoken");
+
 require("dotenv").config();
 const sort_order_const = ["ASC", "DESC"];
 const search_key_const = ["first_name", "last_name", "employee_id"];
