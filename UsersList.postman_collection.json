@@ -1,0 +1,94 @@
+{
+	"info": {
+		"_postman_id": "9e6eb4d3-bcf7-44ac-a54e-8e6362103d63",
+		"name": "GraphQL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Search using GraphQL",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJfaWQiOjI5fSwiaWF0IjoxNjIxODcyNDc1LCJleHAiOjE2MjE4NzYwNzV9.IxC4nia5V1dwF2dK4GWHXauWPvEquxDgX9YWcXsJJ94",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\r\n  usersList(searchKey: \"first_name\", searchValue: \"pra\",page_no:1,sort:[{column:\"first_name\",order:\"ASC\"}]) {\r\n    rows {\r\n      id\r\n      email\r\n      status\r\n      first_name\r\n      last_name\r\n      employee_id\r\n      organization_name\r\n    }\r\n    total_rows\r\n  }\r\n}",
+						"variables": ""
+					},
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Search using GraphQL",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJfaWQiOjI5fSwiaWF0IjoxNjIxODcyNDc1LCJleHAiOjE2MjE4NzYwNzV9.IxC4nia5V1dwF2dK4GWHXauWPvEquxDgX9YWcXsJJ94",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "{\r\n  usersList(searchKey: \"first_name\", searchValue: \"pra\",page_no:1,sort:[{column:\"first_name\",order:\"ASC\"}]) {\r\n    rows {\r\n      id\r\n      email\r\n      status\r\n      first_name\r\n      last_name\r\n      employee_id\r\n      organization_name\r\n    }\r\n    total_rows\r\n  }\r\n}",
+								"variables": ""
+							},
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		}
+	]
+}
